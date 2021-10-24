@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script src="js/pixi.min.js"></script>
+    <script>
+		var app = new PIXI.Application(1920,1080);
+        document.body.appendChild(app.view);
+        var bg = new PIXI.Sprite.fromImage("res/bg.png");
+		var score=new PIXI.Sprite.fromImage("res/score.png");
+		var rate=new PIXI.Sprite.fromImage("res/rate.png");
+		var aim=new PIXI.Sprite.fromImage("res/aim.png");
+		var target=new PIXI.Sprite.fromImage("res/target.png");
+		var start =new PIXI.Sprite.fromImage("res/start.png");
+		var pause =new PIXI.Sprite.fromImage("res/pause.png");
+		var con=new PIXI.Sprite.fromImage("res/continue.png");
+		var replay=new PIXI.Sprite.fromImage("res/replay.png");
+		var fenshu=new PIXI.Text("0");
+		var infos=new PIXI.Text("射击球体开始游戏");
+		var infoe=new PIXI.Text("游戏结束");
+		var infoc=new PIXI.Text("射击球体继续游戏");
+		var infoshot=new PIXI.Text("命中率");
+		var time=60;
+		var hm=0;
+		var txt=new PIXI.Text(time);
+		txt.x=993;
+		txt.y=106;
+		var count=0;
+		var isstart=0;
+		var isend=0;
+		var isstop=0;
+		var numshot=0;
+		var numhit=0;
+		var numrate=numshot/numhit;
+		fenshu.x=631;
+		fenshu.y=95;
+		infos.x=900;
+		infos.y=220;
+		infoe.x=900;
+		infoe.y=220;
+		infoshot.x=1180;
+		infoshot.y=90;
+		pause.x=1750;
+		pause.y=90;
+		con.x=1839;
+		con.y=90;
+		replay.x=1650;
+		replay.y=90;
+		infoe.visible=false;
+        app.stage.addChild(bg);
+		app.stage.addChild(score);
+		app.stage.addChild(rate);
+		app.stage.addChild(target);
+		app.stage.addChild(aim);
+		app.stage.addChild(fenshu);
+		app.stage.addChild(infos);
+		app.stage.addChild(infoe);
+		app.stage.addChild(pause);
+		app.stage.addChild(con);
+		app.stage.addChild(txt);
+		app.stage.addChild(replay);
+		app.stage.addChild(infoc);
+		app.stage.addChild(infoshot);
+		infoc.visible=false;
+		aim.anchor.set(0.5,0.5);
+		score.anchor.set(0.5,0.5);
+		rate.anchor.set(0.5,0.5);
+		pause.anchor.set(0.5,0.5);
+		con.anchor.set(0.5,0.5);
+		replay.anchor.set(0.5,0.5);
+		rate.x=1300;
+		rate.y=100;
+		score.x=700;
+		score.y=100;
+		start.x=760;
+		start.y=390;
+		target.x=Math.random()*700+300;
+		target.y=Math.random()*700+300;
+		bg.interactive=true;
+		pause.interactive=true;
+		con.interactive=true;
+		replay.interactive=true;
+		bg.on("mousemove",moveaim);
+		bg.on("click",shot);
+		pause.on("click",stopgame);
+		con.on("click",gogame);
+		replay.on("click",regame);
+		function moveaim(event){
+			var pos=event.data.getLocalPosition(app.stage);
+			aim.x=pos.x;
+			aim.y=pos.y;
+			console.log(aim.x);
+			console.log(aim.y);
+			console.log(numshot);
+			console.log(numhit);
+		}
+		function shot(){
+			if(isend==0){
+			if(aim.x<=target.x+target.width&&aim.x>=target.x-target.width){
+				if(aim.y<=target.y+target.height&&aim.y>=target.y-target.height)
+					app.stage.removeChild(target);
+					target.x=Math.random()*700+300;
+					target.y=Math.random()*500+300;
+					target.anchor.set(0.5,0.5);
+					app.stage.addChild(target);
+					count++;
+					isstart=1;
+					numshot++;
+					numhit++;
+					fenshu.text=" "+count;
+					infos.visible=false;
+					infoe.visible=false;
+					infoc.visible=false;
+					infoshot.text="命中率 "+(numhit/numshot)*100+"%";
+			}
+			else{
+				if(isstart==1)
+					count--;
+					numshot++;
+					fenshu.text=" "+count;
+					infoshot.text="命中率 "+(numhit/numshot)*100+"%";}}
+				
+		}
+		function stopgame(){
+			isstop=1;
+			
+		}
+		function gogame(){
+			isstop=0;
+			isstart=0;
+			infoc.x=900;
+			infoc.y=220;
+			infoc.visible=true;
+		}
+		app.ticker.add(animate);
+		function animate(){
+			txt.text=time;
+			if(isstart==1&&isstop==0){
+			hm++;
+			if(hm>=120){
+				hm=0;
+				time--;
+			}
+			if(time<=0){
+				time=0;
+				isend=1;}
+			if(isend==1)
+				infoe.visible=true;
+			else
+				infoe.visible=false;
+		}}
+		function regame(){
+			count=0;
+			isstart=0;
+			isend=0;
+			isstop=0;
+			time=60;
+			hm=0;
+			score=0;
+			fenshu.text=" "+count;
+			infos.visible=true;
+			target.x=Math.random()*700+300;
+			target.y=Math.random()*700+300;
+		}
+    </script>
+</body>
+</html>
